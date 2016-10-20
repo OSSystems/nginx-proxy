@@ -1,4 +1,4 @@
-{{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
+{{ $CurrentContainer := where .Docker.Containers "ID" .Docker.CurrentContainerID | first }}
 
 {{ define "upstream" }}
 	{{ if .Address }}
@@ -16,6 +16,9 @@
 		server {{ .Network.IP }} down;
 	{{ end }}
 {{ end }}
+
+{{ range $container := $ }}
+{{ if eq $container.ID $CurrentContainer.ID }}
 
 # If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
 # scheme used to connect to this server
@@ -74,6 +77,9 @@ server {
 	ssl_certificate /etc/nginx/certs/default.crt;
 	ssl_certificate_key /etc/nginx/certs/default.key;
 }
+{{ end }}
+
+{{ end }}
 {{ end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
