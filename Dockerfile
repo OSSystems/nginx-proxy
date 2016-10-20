@@ -17,11 +17,12 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
 ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
 RUN chmod u+x /usr/local/bin/forego
 
-ENV DOCKER_GEN_VERSION 0.7.3
+ENV DOCKER_GEN_VERSION 0.8.0-ossystems-alpha
 
-RUN wget https://github.com/jwilder/docker-gen/releases/download/$DOCKER_GEN_VERSION/docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
- && tar -C /usr/local/bin -xvzf docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
- && rm /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz
+ADD https://github.com/OSSystems/docker-gen/releases/download/$DOCKER_GEN_VERSION/docker-gen-alpine-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
+    /docker-gen-alpine-linux-amd64-$DOCKER_GEN_VERSION.tar.gz
+RUN tar -C /usr/local/bin -xvzf /docker-gen-alpine-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
+ && rm /docker-gen-alpine-linux-amd64-$DOCKER_GEN_VERSION.tar.gz
 
 COPY . /app/
 WORKDIR /app/
