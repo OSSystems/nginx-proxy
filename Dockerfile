@@ -28,9 +28,15 @@ RUN wget --quiet \
 COPY . /app/
 WORKDIR /app/
 
-# Configure Nginx and apply fix for very long server names
+# Don't daemonize, apply fix for very long server names, increase number of
+# worker connections, enable epoll features and accept all connections at one
+# time.
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf \
- && sed -i 's/^http {/&\n    server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
+ && sed -i \
+        -e 's/^http {/&\n    server_names_hash_bucket_size 128;/g' \
+        -e "s,worker_connections .*;,worker_connections 65536;\n    use epoll;," \
+        -e 's,# multi_accept .*;,multi_accept on;,' \
+        /etc/nginx/nginx.conf
 
 ENV DOCKER_HOST unix:///tmp/docker.sock
 
