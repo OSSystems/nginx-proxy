@@ -10,14 +10,19 @@ RUN apt-get update \
  && rm -r /var/lib/apt/lists/*
 
 # Install Forego
-ADD https://github.com/jwilder/forego/releases/download/v0.16.1/forego /usr/local/bin/forego
-RUN chmod u+x /usr/local/bin/forego
+RUN wget --quiet \
+         -O /usr/local/bin/forego \
+         https://github.com/jwilder/forego/releases/download/v0.16.1/forego \
+ && echo "450359cd7d6a112e579bfe32e43c203017ad2de75c6d1bd4916acf2cb504b483  /usr/local/bin/forego" | sha256sum -c \
+ && chmod u+x /usr/local/bin/forego
 
 ENV DOCKER_GEN_VERSION 0.8.0-ossystems-alpha
 
-ADD https://github.com/OSSystems/docker-gen/releases/download/$DOCKER_GEN_VERSION/docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
-    /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz
-RUN tar -C /usr/local/bin -xvzf /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
+RUN wget --quiet \
+         -O /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
+         https://github.com/OSSystems/docker-gen/releases/download/$DOCKER_GEN_VERSION/docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
+ && echo "9b516ffc3dee2918ca842288a04b7ea107de1e58d74179d4ddadb1de07490e52  /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz" | sha256sum -c \
+ && tar -C /usr/local/bin -xvzf /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz \
  && rm /docker-gen-linux-amd64-$DOCKER_GEN_VERSION.tar.gz
 
 COPY . /app/
